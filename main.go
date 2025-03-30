@@ -10,17 +10,29 @@ package main
 // provided by the vault agent.
 //
 // The API is provided by gin-gonic
-
-
 import (
+	"os"
+
+	"github.com/charmbracelet/log"
 	"github.com/gin-gonic/gin"
+
+	vault "github.com/hashicorp/vault/api"
 )
 
 func main() {
-	router := gin.Default()
+	// Setup logging
+	logger := log.New(os.Stdout)
+	logger.SetFormatter(log.JSONFormatter)
 
+	// configure Vault client
+	vaultConfig := vault.DefaultConfig()
+	vaultConfig.Address = "http://active.vault.service.consul:8200"
+
+	router := gin.Default()
+	log.Info("Starting server")
 	router.GET("/health", func(c *gin.Context) {
 		healthy := getSystemHealth()
+		log.Info("Health check")
 		c.JSON(200, gin.H{"status": healthy})
 	})
 
@@ -29,11 +41,11 @@ func main() {
 	// If the digitalocean token is valid, digitalocean_initialized will be true.
 	router.GET("/readiness", func(c *gin.Context) {
 		// Check Vault token
-		vault_token_ready := checkVaultToken()
+		vaultTokenReady := checkVaultToken()
 		// Check DigitalOcean token
-		do_token_ready := checkDigitalOceanToken()
+		doTokenReady := checkDigitalOceanToken()
 
-		c.JSON(200, gin.H{"vault_initialized": vault_token_ready, "digitalocean_initialized": do_token_ready})
+		c.JSON(200, gin.H{"vault_initialized": vaultTokenReady, "digitalocean_initialized": doTokenReady})
 	})
 
 	router.Run(":8080")
