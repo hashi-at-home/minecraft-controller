@@ -11,8 +11,10 @@ package main
 //
 // The API is provided by gin-gonic
 import (
+	"context"
 	"net/http"
 	"os"
+	"strconv"
 
 	"github.com/charmbracelet/log"
 	"github.com/digitalocean/godo"
@@ -77,7 +79,34 @@ func setupDigitalOcean(router *gin.Engine) *gin.Engine {
 
 	// First, we will implement the GET route for getting all of the
 	// droplets
+	context := context.TODO()
+	droplets, dropletsResp, err := doClient.Droplets.ListByTag(context, "minecraft", &godo.ListOptions{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Info(dropletsResp.StatusCode)
 
+	for _, droplet := range droplets {
+		log.Info(droplet.Name)
+	}
+	router.GET("/droplets", func(c *gin.Context) {
+		c.JSON(http.StatusOK, droplets)
+	})
+
+	router.GET("/droplets/:id", func(c *gin.Context) {
+		id := c.Param("id")
+		nid, err := strconv.Atoi(id)
+		if err != nil {
+			log.Fatal(err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		}
+
+		droplet, _, err := doClient.Droplets.Get(context, nid)
+		if err != nil {
+			log.Fatal(err)
+		}
+		c.JSON(http.StatusOK, droplet)
+	})
 	return router
 }
 
@@ -92,11 +121,11 @@ func main() {
 	}
 	router = setupReadiness(router)
 	router = setupStaticAssets(router)
+	router = setupDigitalOcean(router)
 	err := router.Run(":8080")
 	if err != nil {
 		log.Fatal(err)
 	}
-
 }
 
 func checkVaultToken() bool {

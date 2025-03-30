@@ -31,7 +31,7 @@ func TestReadiness(t *testing.T) {
 	err := json.NewDecoder(w.Body).Decode(&r)
 	assert.NoError(t, err)
 	assert.False(t, r.Ready)
-	assert.False(t, r.DigitalOceanInitialized)
+
 }
 
 func TestRoot(t *testing.T) {

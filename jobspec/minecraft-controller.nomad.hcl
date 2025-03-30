@@ -47,7 +47,7 @@ DIGITALOCEAN_TOKEN={{ .Data.data.minecraft_controller }}
       service {
         name = "minecraft-controller"
         port = "http"
-        tags = ["minecraft-controller", ""]
+        tags = ["urlprefix-/mc/ strip=/mc", "urlprefix-/mc/healthz strip=/mc"]
 
         check {
           name = "minecraft-controller-ready"
