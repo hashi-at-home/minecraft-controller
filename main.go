@@ -15,7 +15,11 @@ import (
 	"os"
 
 	"github.com/charmbracelet/log"
+	"github.com/digitalocean/godo"
 	"github.com/gin-gonic/gin"
+	healthcheck "github.com/tavsec/gin-healthcheck"
+	"github.com/tavsec/gin-healthcheck/checks"
+	"github.com/tavsec/gin-healthcheck/config"
 )
 
 // Ready is a type that represents the readiness of the system
@@ -39,6 +43,9 @@ func setupRouter() *gin.Engine {
 }
 
 func setupReadiness(router *gin.Engine) *gin.Engine {
+	doEnvCheck := checks.NewEnvCheck("DIGITALOCEAN_TOKEN")
+	healthcheck.New(router, config.DefaultConfig(), []checks.Check{doEnvCheck}) //#nosec G104 -- This is a false positive
+
 	router.GET("/readiness", func(c *gin.Context) {
 		// Check Vault token
 		vaultTokenReady := checkVaultToken()
@@ -57,6 +64,20 @@ func setupStaticAssets(router *gin.Engine) *gin.Engine {
 	router.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.tmpl", gin.H{"title": "Minecraft Controller"})
 	})
+	return router
+}
+
+func setupDigitalOcean(router *gin.Engine) *gin.Engine {
+	// Set up routes for interacting with digital ocean
+	// We need to set up the digital ocean client
+	doClient := godo.NewFromToken(os.Getenv("DIGITALOCEAN_TOKEN"))
+	if doClient == nil {
+		log.Fatal("Failed to create DigitalOcean client")
+	}
+
+	// First, we will implement the GET route for getting all of the
+	// droplets
+
 	return router
 }
 

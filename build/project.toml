@@ -1,0 +1,18 @@
+[_]
+schema-version = "0.2"
+id = "io.hashi-at-home.minecraft-controller"
+name = "minecraft"
+version = "1.0.0"
+
+[io.buildpacks]
+exclude = [
+    "jobspec"
+]
+
+[[io.buildpacks.group]]
+uri = "./"
+
+[[io.buildpacks.build.env]]
+BP_OCI_SOURCE='https://github.com/hashi-at-home/minecraft-controller'
+BP_IMAGE_LABELS="org.opencontainers.image.source=https://github.com/hashi-at-home/minecraft-controller"
+BP_OCI_DESCRIPTION="Operator for Minecraft Instances"
