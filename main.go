@@ -107,6 +107,40 @@ func setupDigitalOcean(router *gin.Engine) *gin.Engine {
 		}
 		c.JSON(http.StatusOK, droplet)
 	})
+
+	router.DELETE("/droplets/:id", func(c *gin.Context) {
+		id := c.Param("id")
+		nid, err := strconv.Atoi(id)
+		if err != nil {
+			log.Fatal(err)
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+		}
+
+		_, err = doClient.Droplets.Delete(context, nid)
+		if err != nil {
+			log.Fatal(err)
+		}
+		c.JSON(http.StatusOK, gin.H{"message": "Droplet deleted"})
+	})
+
+	router.DELETE("/droplets", func(c *gin.Context) {
+		// Implementation of DELETE /droplets endpoint
+		// this should delete all droplets with tag minecraft
+
+		resp, err := doClient.Droplets.DeleteByTag(context, "minecraft")
+		if err != nil {
+			log.Fatal(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete droplets"})
+		}
+		log.Infof("Deleted droplets: %s", resp.Body)
+		// If the response code is not ok, return an error
+		if resp.StatusCode != http.StatusNoContent {
+			log.Infof("Failed to delete droplets code %v", resp.StatusCode)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete droplets - response was not OK"})
+		}
+
+		c.JSON(http.StatusOK, gin.H{"message": resp.Body})
+	})
 	return router
 }
 
