@@ -5,6 +5,8 @@ repos:
     rev: v1.0.0-rc.1
     hooks:
       - id: go-lint
-      - id: go-vet
-      - id: go-mod-tidy
       - id: go-fmt
+      - id: go-vet-mod
+      - id: go-sec-mod
+      - id: go-test-mod
+      - id: go-mod-tidy

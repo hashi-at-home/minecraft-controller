@@ -11,56 +11,94 @@ package main
 //
 // The API is provided by gin-gonic
 import (
+	"net/http"
 	"os"
 
 	"github.com/charmbracelet/log"
 	"github.com/gin-gonic/gin"
-
-	vault "github.com/hashicorp/vault/api"
 )
+
+// Ready is a type that represents the readiness of the system
+type Ready struct {
+	VaultInitialized        bool `json:"vault_initialized"`
+	DigitalOceanInitialized bool `json:"digitalocean_initialized"`
+	Ready                   bool `json:"ready"`
+}
+
+func setupRouter() *gin.Engine {
+	router := gin.Default()
+
+	log.Info("Starting server")
+	router.GET("/health", func(c *gin.Context) {
+		healthy := getSystemHealth()
+		log.Debug("Health check called")
+		c.JSON(http.StatusOK, gin.H{"status": healthy})
+	})
+
+	return router
+}
+
+func setupReadiness(router *gin.Engine) *gin.Engine {
+	router.GET("/readiness", func(c *gin.Context) {
+		// Check Vault token
+		vaultTokenReady := checkVaultToken()
+		// Check DigitalOcean token
+		doTokenReady := checkDigitalOceanToken()
+		ready := vaultTokenReady && doTokenReady
+
+		c.JSON(http.StatusOK, gin.H{"vault_initialized": vaultTokenReady, "digitalocean_initialized": doTokenReady, "ready": ready})
+	})
+	return router
+}
+
+func setupStaticAssets(router *gin.Engine) *gin.Engine {
+	router.StaticFile("/favicon.ico", "./assets/favicon.ico")
+	router.LoadHTMLGlob("templates/*.tmpl")
+	router.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.tmpl", gin.H{"title": "Minecraft Controller"})
+	})
+	return router
+}
 
 func main() {
 	// Setup logging
 	logger := log.New(os.Stdout)
 	logger.SetFormatter(log.JSONFormatter)
 
-	// configure Vault client
-	vaultConfig := vault.DefaultConfig()
-	vaultConfig.Address = "http://active.vault.service.consul:8200"
+	router := setupRouter()
+	if router == nil {
+		log.Fatal("Failed to setup router")
+	}
+	router = setupReadiness(router)
+	router = setupStaticAssets(router)
+	err := router.Run(":8080")
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	router := gin.Default()
-	log.Info("Starting server")
-	router.GET("/health", func(c *gin.Context) {
-		healthy := getSystemHealth()
-		log.Info("Health check")
-		c.JSON(200, gin.H{"status": healthy})
-	})
-
-	// Add a readiness check endpoint, which will return a 200 and a message indicating the status of access to secrets
-	// If the vault token is valid, vault_initialized will be true.
-	// If the digitalocean token is valid, digitalocean_initialized will be true.
-	router.GET("/readiness", func(c *gin.Context) {
-		// Check Vault token
-		vaultTokenReady := checkVaultToken()
-		// Check DigitalOcean token
-		doTokenReady := checkDigitalOceanToken()
-
-		c.JSON(200, gin.H{"vault_initialized": vaultTokenReady, "digitalocean_initialized": doTokenReady})
-	})
-
-	router.Run(":8080")
 }
 
 func checkVaultToken() bool {
 	// Implementation of checkVaultToken function
 	// this should run a look up of the
-	return false
+	doToken := os.Getenv("VAULT_TOKEN")
+	if doToken == "" {
+		log.Debug("VAULT_TOKEN environment variable not set")
+		return false
+	}
+	return true
 }
 
 func checkDigitalOceanToken() bool {
 	// Implementation of checkDigitalOceanToken function
 	// this should run a look up of the
-	return false
+	doToken := os.Getenv("DIGITALOCEAN_TOKEN")
+	if doToken == "" {
+		log.Debug("DIGITALOCEAN_TOKEN environment variable not set")
+		return false
+	}
+	return true
+
 }
 
 func getSystemHealth() string {
