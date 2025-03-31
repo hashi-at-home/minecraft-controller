@@ -1,7 +1,6 @@
 module github.com/hashi-at-home/minecraft-controller
 
 go 1.24.1
-
 require (
 	github.com/charmbracelet/log v0.4.1
 	github.com/digitalocean/godo v1.142.0
@@ -51,7 +50,7 @@ require (
 	github.com/pelletier/go-toml/v2 v2.2.3 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rabbitmq/amqp091-go v1.10.0 // indirect
-	github.com/redis/go-redis/v9 v9.7.1 // indirect
+	github.com/redis/go-redis/v9 v9.7.3 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/rogpeppe/go-internal v1.13.1 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
