@@ -10,7 +10,7 @@ exclude = [
 ]
 
 [[io.buildpacks.group]]
-uri = "./"
+uri = "../"
 
 [[io.buildpacks.build.env]]
 BP_OCI_SOURCE='https://github.com/hashi-at-home/minecraft-controller'
