@@ -1,12 +1,13 @@
 module github.com/hashi-at-home/minecraft-controller
 
 go 1.24.1
+
 require (
 	github.com/charmbracelet/log v0.4.1
 	github.com/digitalocean/godo v1.142.0
 	github.com/gin-gonic/gin v1.10.0
 	github.com/stretchr/testify v1.10.0
-	github.com/tavsec/gin-healthcheck v1.7.5
+	github.com/tavsec/gin-healthcheck v1.7.6
 )
 
 require (
@@ -65,7 +66,7 @@ require (
 	golang.org/x/exp v0.0.0-20231006140011-7918f672742d // indirect
 	golang.org/x/net v0.36.0 // indirect
 	golang.org/x/oauth2 v0.23.0 // indirect
-	golang.org/x/sync v0.12.0 // indirect
+	golang.org/x/sync v0.13.0 // indirect
 	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
 	golang.org/x/time v0.6.0 // indirect
