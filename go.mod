@@ -7,7 +7,7 @@ require (
 	github.com/digitalocean/godo v1.160.0
 	github.com/gin-gonic/gin v1.10.1
 	github.com/stretchr/testify v1.10.0
-	github.com/tavsec/gin-healthcheck v1.7.9
+	github.com/tavsec/gin-healthcheck v1.7.10
 )
 
 require (
@@ -55,7 +55,7 @@ require (
 	github.com/pelletier/go-toml/v2 v2.2.3 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rabbitmq/amqp091-go v1.10.0 // indirect
-	github.com/redis/go-redis/v9 v9.11.0 // indirect
+	github.com/redis/go-redis/v9 v9.12.0 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/rogpeppe/go-internal v1.13.1 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
