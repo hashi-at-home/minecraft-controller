@@ -4,7 +4,7 @@ go 1.24.1
 
 require (
 	github.com/charmbracelet/log v0.4.2
-	github.com/digitalocean/godo v1.164.0
+	github.com/digitalocean/godo v1.165.1
 	github.com/gin-gonic/gin v1.10.1
 	github.com/stretchr/testify v1.11.1
 	github.com/tavsec/gin-healthcheck v1.7.10
