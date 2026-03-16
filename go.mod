@@ -3,7 +3,7 @@ module github.com/hashi-at-home/minecraft-controller
 go 1.25.0
 
 require (
-	github.com/charmbracelet/log v1.0.0
+	github.com/charmbracelet/log/v2 v2.0.0
 	github.com/digitalocean/godo v1.177.0
 	github.com/gin-gonic/gin v1.12.0
 	github.com/stretchr/testify v1.11.1
